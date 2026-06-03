@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kasa — Curated Stays in Mexico City</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <!-- ─── GOOGLE ANALYTICS ─── -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-QCX3G9KSPC"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-QCX3G9KSPC');
+  </script>
+
+  <style>
+    /* ─── TOKENS ─── */
+    :root {
+      --ink:      #1a1612;
+      --paper:    #f7f3ee;
+      --warm:     #e8ddd0;
+      --gold:     #b5924c;
+      --gold-lt:  #d4aa6a;
+      --muted:    #7a6f65;
+      --white:    #ffffff;
+      --radius:   4px;
+      --serif:    'Cormorant Garamond', Georgia, serif;
+      --sans:     'DM Sans', sans-serif;
+      --transition: 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    /* ─── RESET ─── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body {
+      font-family: var(--sans);
+      background: var(--paper);
+      color: var(--ink);
+      overflow-x: hidden;
+    }
+    img { display: block; max-width: 100%; }
+    a  { color: inherit; text-decoration: none; }
+
+    /* ─── NOISE GRAIN OVERLAY ─── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.4;
+    }
+
+    /* ─── HEADER / NAV ─── */
+    header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.25rem 3rem;
+      background: rgba(247, 243, 238, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(181, 146, 76, 0.2);
+      transition: padding var(--transition);
+    }
+    .logo {
+      font-family: var(--serif);
+      font-size: 2rem;
+      font-weight: 300;
+      letter-spacing: 0.25em;
+      color: var(--ink);
+    }
+    .logo span { color: var(--gold); }
+    nav a {
+      font-size: 0.78rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-left: 2.5rem;
+      transition: color 0.2s;
+    }
+    nav a:hover { color: var(--gold); }
+
+    /* ─── HERO ─── */
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-left {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 8rem 4rem 6rem 5rem;
+      position: relative;
+      z-index: 2;
+    }
+    .hero-eyebrow {
+      font-size: 0.72rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .hero-eyebrow::before {
+      content: '';
+      display: block;
+      width: 40px;
+      height: 1px;
+      background: var(--gold);
+    }
+    .hero h1 {
+      font-family: var(--serif);
+      font-size: clamp(3.2rem, 5vw, 5rem);
+      font-weight: 300;
+      line-height: 1.08;
+      letter-spacing: -0.01em;
+      margin-bottom: 1.75rem;
+    }
+    .hero h1 em {
+      font-style: italic;
+      color: var(--gold);
+    }
+    .hero-sub {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: var(--muted);
+      max-width: 400px;
+      margin-bottom: 2.5rem;
+    }
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      background: var(--ink);
+      color: var(--paper);
+      font-size: 0.8rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 1rem 2rem;
+      border: none;
+      cursor: pointer;
+      transition: background var(--transition), transform 0.2s;
+      width: fit-content;
+    }
+    .btn-primary:hover { background: var(--gold); transform: translateY(-2px); }
+    .btn-primary svg { transition: transform 0.3s; }
+    .btn-primary:hover svg { transform: translateX(4px); }
+
+    .hero-right {
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-right img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      transform: scale(1.05);
+      transition: transform 8s ease;
+    }
+    .hero-right:hover img { transform: scale(1.0); }
+    .hero-right::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to right, var(--paper) 0%, transparent 25%);
+    }
+    .hero-badge {
+      position: absolute;
+      bottom: 3rem;
+      right: 3rem;
+      z-index: 3;
+      background: var(--white);
+      border: 1px solid var(--warm);
+      padding: 1.25rem 1.5rem;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.12);
+    }
+    .hero-badge .num {
+      font-family: var(--serif);
+      font-size: 2.5rem;
+      font-weight: 300;
+      color: var(--gold);
+      line-height: 1;
+    }
+    .hero-badge .label {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 0.25rem;
+    }
+
+    /* ─── SECTION WRAPPERS ─── */
+    .section { padding: 7rem 5rem; }
+    .section-sm { padding: 4rem 5rem; }
+
+    .section-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 4rem;
+    }
+    .section-tag {
+      font-size: 0.72rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.75rem;
+    }
+    .section-title {
+      font-family: var(--serif);
+      font-size: clamp(2rem, 3vw, 3rem);
+      font-weight: 300;
+      line-height: 1.15;
+    }
+    .section-title em { font-style: italic; color: var(--gold); }
+    .section-desc {
+      font-size: 0.95rem;
+      color: var(--muted);
+      line-height: 1.7;
+      max-width: 380px;
+      text-align: right;
+    }
+
+    /* ─── PROPERTIES GRID ─── */
+    #properties { background: var(--paper); }
+    .properties-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+    }
+
+    .property-card {
+      background: var(--white);
+      overflow: hidden;
+      border: 1px solid var(--warm);
+      transition: transform var(--transition), box-shadow var(--transition);
+      cursor: pointer;
+    }
+    .property-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 30px 80px rgba(0,0,0,0.12);
+    }
+
+    .card-image {
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 4/3;
+    }
+    .card-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s ease;
+    }
+    .property-card:hover .card-image img { transform: scale(1.07); }
+
+    .card-badge {
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+      background: var(--ink);
+      color: var(--paper);
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 0.35rem 0.75rem;
+    }
+    .card-rating {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: rgba(255,255,255,0.95);
+      font-size: 0.75rem;
+      font-weight: 500;
+      padding: 0.35rem 0.6rem;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+    .card-rating::before {
+      content: '★';
+      color: var(--gold);
+    }
+
+    .card-body { padding: 1.5rem; }
+    .card-location {
+      font-size: 0.68rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.5rem;
+    }
+    .card-title {
+      font-family: var(--serif);
+      font-size: 1.35rem;
+      font-weight: 400;
+      line-height: 1.25;
+      margin-bottom: 0.75rem;
+    }
+    .card-meta {
+      display: flex;
+      gap: 1.25rem;
+      margin-bottom: 1rem;
+    }
+    .card-meta span {
+      font-size: 0.78rem;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+    .card-desc {
+      font-size: 0.87rem;
+      color: var(--muted);
+      line-height: 1.65;
+      margin-bottom: 1.25rem;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .card-highlights {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-bottom: 1.5rem;
+    }
+    .chip {
+      font-size: 0.67rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      border: 1px solid var(--warm);
+      padding: 0.25rem 0.6rem;
+    }
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 1rem;
+      border-top: 1px solid var(--warm);
+    }
+    .card-reviews {
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+    .btn-book {
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--white);
+      background: var(--gold);
+      padding: 0.6rem 1.2rem;
+      transition: background 0.2s, transform 0.2s;
+      border: none;
+      cursor: pointer;
+    }
+    .btn-book:hover { background: var(--ink); transform: scale(1.03); }
+
+    /* ─── WHY KASA ─── */
+    #why { background: var(--ink); color: var(--paper); }
+    #why .section-title { color: var(--paper); }
+    #why .section-tag { color: var(--gold-lt); }
+    #why .section-desc { color: rgba(247,243,238,0.5); }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2px;
+      margin-top: 4rem;
+    }
+    .feature {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.07);
+      padding: 2.5rem 2rem;
+      transition: background 0.3s;
+    }
+    .feature:hover { background: rgba(181,146,76,0.08); }
+    .feature-icon {
+      font-size: 1.8rem;
+      margin-bottom: 1.25rem;
+    }
+    .feature-title {
+      font-family: var(--serif);
+      font-size: 1.15rem;
+      font-weight: 400;
+      color: var(--paper);
+      margin-bottom: 0.6rem;
+    }
+    .feature-text {
+      font-size: 0.85rem;
+      color: rgba(247,243,238,0.5);
+      line-height: 1.65;
+    }
+
+    /* ─── TESTIMONIAL / STATS BANNER ─── */
+    .stats-banner {
+      background: var(--gold);
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .stat {
+      padding: 3rem 3.5rem;
+      text-align: center;
+      border-right: 1px solid rgba(255,255,255,0.25);
+    }
+    .stat:last-child { border-right: none; }
+    .stat-num {
+      font-family: var(--serif);
+      font-size: 3.5rem;
+      font-weight: 300;
+      color: var(--white);
+      line-height: 1;
+    }
+    .stat-label {
+      font-size: 0.72rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.75);
+      margin-top: 0.4rem;
+    }
+
+    /* ─── CONTACT / INQUIRY FORM ─── */
+    #contact { background: var(--warm); }
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
+      align-items: start;
+    }
+    .contact-left {}
+    .contact-left p {
+      font-size: 0.95rem;
+      color: var(--muted);
+      line-height: 1.75;
+      margin-top: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .contact-detail {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 0.6rem;
+    }
+    .contact-detail strong { color: var(--ink); }
+
+    /* ─── FORM ─── */
+    .form-card {
+      background: var(--white);
+      padding: 2.5rem;
+      border: 1px solid rgba(181,146,76,0.2);
+    }
+    .form-title {
+      font-family: var(--serif);
+      font-size: 1.5rem;
+      font-weight: 400;
+      margin-bottom: 1.75rem;
+    }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .form-group { margin-bottom: 1.1rem; }
+    .form-group label {
+      display: block;
+      font-size: 0.72rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.4rem;
+    }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      background: var(--paper);
+      border: 1px solid var(--warm);
+      padding: 0.75rem 1rem;
+      font-family: var(--sans);
+      font-size: 0.9rem;
+      color: var(--ink);
+      outline: none;
+      transition: border-color 0.2s;
+      border-radius: var(--radius);
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      border-color: var(--gold);
+    }
+    .form-group textarea { resize: vertical; min-height: 100px; }
+    .btn-submit {
+      width: 100%;
+      background: var(--ink);
+      color: var(--paper);
+      font-family: var(--sans);
+      font-size: 0.8rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      padding: 1rem;
+      border: none;
+      cursor: pointer;
+      margin-top: 0.5rem;
+      transition: background 0.2s;
+    }
+    .btn-submit:hover { background: var(--gold); }
+    .form-success {
+      display: none;
+      text-align: center;
+      padding: 2rem;
+    }
+    .form-success .check {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+    .form-success p {
+      font-size: 0.95rem;
+      color: var(--muted);
+    }
+
+    /* ─── FOOTER ─── */
+    footer {
+      background: var(--ink);
+      color: rgba(247,243,238,0.5);
+      padding: 3rem 5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .footer-logo {
+      font-family: var(--serif);
+      font-size: 1.6rem;
+      font-weight: 300;
+      letter-spacing: 0.25em;
+      color: var(--paper);
+    }
+    .footer-logo span { color: var(--gold); }
+    footer p { font-size: 0.78rem; }
+
+    /* ─── SCROLL FADE-IN ─── */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .fade-up.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; min-height: auto; }
+      .hero-right { height: 50vw; }
+      .hero-left { padding: 7rem 2rem 3rem; }
+      .section, .section-sm { padding: 4rem 2rem; }
+      .properties-grid { grid-template-columns: 1fr; }
+      .features-grid { grid-template-columns: 1fr 1fr; }
+      .stats-banner { grid-template-columns: 1fr; }
+      .contact-grid { grid-template-columns: 1fr; gap: 2rem; }
+      .form-row { grid-template-columns: 1fr; }
+      header { padding: 1rem 1.5rem; }
+      nav { display: none; }
+      footer { flex-direction: column; gap: 1rem; text-align: center; }
+      .section-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+      .section-desc { text-align: left; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ─── HEADER ─── -->
+  <header>
+    <div class="logo">K<span>a</span>sa</div>
+    <nav>
+      <a href="#properties">Properties</a>
+      <a href="#why">Why Kasa</a>
+      <a href="#contact">Inquire</a>
+    </nav>
+  </header>
+
+  <!-- ─── HERO ─── -->
+  <section class="hero">
+    <div class="hero-left">
+      <div class="hero-eyebrow">Curated Stays · Mexico City</div>
+      <h1>Live the city<br />like a <em>local</em>.</h1>
+      <p class="hero-sub">
+        Hand-picked apartments in Mexico City's most vibrant neighborhoods. 
+        Fully equipped, beautifully designed, and hosted with genuine care.
+      </p>
+      <a href="#properties" class="btn-primary">
+        View Properties
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+    </div>
+    <div class="hero-right">
+      <img
+        src="https://a0.muscache.com/im/pictures/airflow/Hosting-953744146563308361/original/01a68ef4-aaa9-4d36-918d-e2434bb62aaf.jpg?im_w=1200"
+        alt="Kasa Mexico City"
+      />
+      <div class="hero-badge">
+        <div class="num">4.9★</div>
+        <div class="label">Average Rating</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── PROPERTIES ─── -->
+  <section class="section" id="properties">
+    <div class="section-header">
+      <div>
+        <div class="section-tag">Our Listings</div>
+        <h2 class="section-title">Three curated<br /><em>spaces</em> await</h2>
+      </div>
+      <p class="section-desc">
+        Each property is carefully selected for its location, comfort, and character. 
+        All verified on Airbnb with Superhost status.
+      </p>
+    </div>
+
+    <div class="properties-grid">
+
+      <!-- PROPERTY 1 -->
+      <div class="property-card fade-up" onclick="trackClick('property-1-sunny-apartment')">
+        <div class="card-image">
+          <img
+            src="https://a0.muscache.com/im/pictures/airflow/Hosting-953744146563308361/original/01a68ef4-aaa9-4d36-918d-e2434bb62aaf.jpg?im_w=720"
+            alt="2Bdr Sunny & Cozy Apartment"
+            loading="lazy"
+          />
+          <div class="card-badge">Superhost · Guest Fav</div>
+          <div class="card-rating">4.96</div>
+        </div>
+        <div class="card-body">
+          <div class="card-location">Mexico City · Residential</div>
+          <h3 class="card-title">2Bdr/2Bth Sunny & Cozy Apartment</h3>
+          <div class="card-meta">
+            <span>🛏 2 Bedrooms</span>
+            <span>🚿 2 Baths</span>
+            <span>👥 Up to 5</span>
+          </div>
+          <p class="card-desc">
+            Sixth-floor apartment with elevator in a secure condominium. Master bedroom with balcony, city views, equipped kitchen, washer/dryer, and dedicated parking included.
+          </p>
+          <div class="card-highlights">
+            <span class="chip">City View</span>
+            <span class="chip">24/7 Security</span>
+            <span class="chip">Free Parking</span>
+            <span class="chip">110 Mbps WiFi</span>
+            <span class="chip">Workspace</span>
+            <span class="chip">Roof Garden</span>
+          </div>
+          <div class="card-footer">
+            <span class="card-reviews">49 reviews</span>
+            <a
+              href="https://www.airbnb.ca/rooms/953744146563308361"
+              target="_blank"
+              rel="noopener"
+              class="btn-book"
+              onclick="trackClick('book-property-1')"
+            >Book on Airbnb</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- PROPERTY 2 -->
+      <div class="property-card fade-up" style="transition-delay:0.12s" onclick="trackClick('property-2-coyoacan')">
+        <div class="card-image">
+          <img
+            src="https://a0.muscache.com/im/pictures/hosting/Hosting-1219829693900334287/original/4af07f93-ede5-41ff-816f-6a69a2497d35.jpeg?im_w=720"
+            alt="Modern & Cozy Coyoacán"
+            loading="lazy"
+          />
+          <div class="card-badge">Superhost · Guest Fav</div>
+          <div class="card-rating">4.91</div>
+        </div>
+        <div class="card-body">
+          <div class="card-location">Coyoacán · Cultural Heart</div>
+          <h3 class="card-title">Modern & Cozy Apartment · Coyoacán Center</h3>
+          <div class="card-meta">
+            <span>🛏 1 Bedroom</span>
+            <span>🚿 1 Bath</span>
+            <span>👥 Up to 2</span>
+          </div>
+          <p class="card-desc">
+            30 m² apartment steps from the Frida Kahlo Museum and Plaza Hidalgo. Brand new, fully equipped, with a private patio, rooftop terrace with BBQ, and 24/7 security.
+          </p>
+          <div class="card-highlights">
+            <span class="chip">Frida Kahlo Nearby</span>
+            <span class="chip">Private Patio</span>
+            <span class="chip">Rooftop BBQ</span>
+            <span class="chip">Self Check-in</span>
+            <span class="chip">Walkable</span>
+          </div>
+          <div class="card-footer">
+            <span class="card-reviews">58 reviews</span>
+            <a
+              href="https://www.airbnb.ca/rooms/1219829693900334287"
+              target="_blank"
+              rel="noopener"
+              class="btn-book"
+              onclick="trackClick('book-property-2')"
+            >Book on Airbnb</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- PROPERTY 3 -->
+      <div class="property-card fade-up" style="transition-delay:0.24s" onclick="trackClick('property-3-bright-studio')">
+        <div class="card-image">
+          <img
+            src="https://a0.muscache.com/im/pictures/hosting/Hosting-1579757803048299892/original/421cae9a-4d44-4af6-9466-9e07bf5aeb3c.jpeg?im_w=720"
+            alt="Bright Studio with Balcony"
+            loading="lazy"
+          />
+          <div class="card-badge">Superhost</div>
+          <div class="card-rating">4.86</div>
+        </div>
+        <div class="card-body">
+          <div class="card-location">Mexico City · Central</div>
+          <h3 class="card-title">Bright Studio · Balcony & Views · Great Location</h3>
+          <div class="card-meta">
+            <span>🛏 Studio</span>
+            <span>🚿 1 Bath</span>
+            <span>👥 Up to 2</span>
+          </div>
+          <p class="card-desc">
+            Modern studio with private balcony and stunning city views. Full gym, business center, rooftop with pizza oven, and free laundry. Perfect for remote workers and urban explorers.
+          </p>
+          <div class="card-highlights">
+            <span class="chip">Private Balcony</span>
+            <span class="chip">City Views</span>
+            <span class="chip">Full Gym</span>
+            <span class="chip">Business Center</span>
+            <span class="chip">82 Mbps WiFi</span>
+            <span class="chip">Rooftop</span>
+          </div>
+          <div class="card-footer">
+            <span class="card-reviews">7 reviews</span>
+            <a
+              href="https://www.airbnb.ca/rooms/1579757803048299892"
+              target="_blank"
+              rel="noopener"
+              class="btn-book"
+              onclick="trackClick('book-property-3')"
+            >Book on Airbnb</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ─── STATS BANNER ─── -->
+  <div class="stats-banner">
+    <div class="stat">
+      <div class="stat-num">4.9★</div>
+      <div class="stat-label">Average Guest Rating</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">114+</div>
+      <div class="stat-label">Verified Reviews</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">100%</div>
+      <div class="stat-label">Response Rate</div>
+    </div>
+  </div>
+
+  <!-- ─── WHY KASA ─── -->
+  <section class="section" id="why">
+    <div class="section-header">
+      <div>
+        <div class="section-tag">Why Kasa</div>
+        <h2 class="section-title" style="color:var(--paper)">Stay with <em>confidence</em></h2>
+      </div>
+      <p class="section-desc">
+        We've thought of everything so you can focus on experiencing the city.
+      </p>
+    </div>
+    <div class="features-grid">
+      <div class="feature fade-up">
+        <div class="feature-icon">🔐</div>
+        <div class="feature-title">24/7 Security</div>
+        <p class="feature-text">All properties are in gated condominiums with round-the-clock security and secure access systems.</p>
+      </div>
+      <div class="feature fade-up" style="transition-delay:0.1s">
+        <div class="feature-icon">📶</div>
+        <div class="feature-title">Fast WiFi</div>
+        <p class="feature-text">High-speed internet in every unit — from 82 to 110 Mbps — so remote work and streaming are seamless.</p>
+      </div>
+      <div class="feature fade-up" style="transition-delay:0.2s">
+        <div class="feature-icon">🏙️</div>
+        <div class="feature-title">Prime Locations</div>
+        <p class="feature-text">Centrally located with easy access to metro, restaurants, cultural landmarks, and business districts.</p>
+      </div>
+      <div class="feature fade-up" style="transition-delay:0.3s">
+        <div class="feature-icon">🏆</div>
+        <div class="feature-title">Superhost Status</div>
+        <p class="feature-text">All listings managed by Airbnb-certified Superhosts with a 100% response rate and years of experience.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── CONTACT / INQUIRY FORM ─── -->
+  <section class="section" id="contact">
+    <div class="contact-grid">
+      <div class="contact-left">
+        <div class="section-tag">Get in Touch</div>
+        <h2 class="section-title">Have questions?<br /><em>We're here.</em></h2>
+        <p>
+          Not sure which property fits your needs? Want to know more about amenities, 
+          check-in procedures, or the neighborhood? Send us a message and we'll respond within the hour.
+        </p>
+        <div class="contact-detail">
+          <span>📍</span>
+          <span><strong>Location:</strong> Mexico City, Mexico</span>
+        </div>
+        <div class="contact-detail">
+          <span>⚡</span>
+          <span><strong>Response time:</strong> Within 1 hour</span>
+        </div>
+        <div class="contact-detail">
+          <span>🛡️</span>
+          <span><strong>Booking:</strong> Secure via Airbnb</span>
+        </div>
+      </div>
+
+      <div class="contact-right">
+        <div class="form-card">
+          <div class="form-title">Send an Inquiry</div>
+
+          <!-- Replace YOUR_FORM_ID with your Formspree form ID after signing up at formspree.io -->
+          <form
+            id="inquiry-form"
+            action="https://formspree.io/f/mgobwyzq"
+            method="POST"
+          >
+            <div class="form-row">
+              <div class="form-group">
+                <label for="fname">First Name</label>
+                <input type="text" id="fname" name="first_name" placeholder="María" required />
+              </div>
+              <div class="form-group">
+                <label for="lname">Last Name</label>
+                <input type="text" id="lname" name="last_name" placeholder="García" required />
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="email">Email Address</label>
+              <input type="email" id="email" name="email" placeholder="maria@example.com" required />
+            </div>
+            <div class="form-group">
+              <label for="property">Which property interests you?</label>
+              <select id="property" name="property">
+                <option value="">— Select a property —</option>
+                <option value="2Bdr Sunny & Cozy Apartment">2Bdr/2Bth Sunny & Cozy Apartment</option>
+                <option value="Modern & Cozy Coyoacán">Modern & Cozy · Coyoacán Center</option>
+                <option value="Bright Studio Balcony">Bright Studio · Balcony & Views</option>
+                <option value="Not sure yet">Not sure yet</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="checkin">Check-in Date</label>
+                <input type="date" id="checkin" name="check_in" />
+              </div>
+              <div class="form-group">
+                <label for="checkout">Check-out Date</label>
+                <input type="date" id="checkout" name="check_out" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="message">Message (optional)</label>
+              <textarea id="message" name="message" placeholder="Any questions or special requests..."></textarea>
+            </div>
+            <button type="submit" class="btn-submit">Send Inquiry →</button>
+          </form>
+
+          <div class="form-success" id="form-success">
+            <div class="check">✅</div>
+            <p>Thank you! We received your inquiry and will be in touch within the hour.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── FOOTER ─── -->
+  <footer>
+    <div class="footer-logo">K<span>a</span>sa</div>
+    <p>© 2026 Kasa · Curated Stays in Mexico City</p>
+    <p>Bookings secured via Airbnb</p>
+  </footer>
+
+  <!-- ─── SCRIPTS ─── -->
+  <script>
+    /* ── Scroll fade-in ── */
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+    /* ── Click tracking helper ── */
+    function trackClick(label) {
+      if (typeof gtag !== 'undefined') {
+        gtag('event', 'click', {
+          event_category: 'engagement',
+          event_label: label,
+        });
+      }
+      console.log('Tracked click:', label);
+    }
+
+    /* ── Form AJAX submission ── */
+    const form = document.getElementById('inquiry-form');
+    if (form) {
+      form.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const data = new FormData(form);
+        try {
+          const res = await fetch(form.action, {
+            method: 'POST',
+            body: data,
+            headers: { 'Accept': 'application/json' }
+          });
+          if (res.ok) {
+            form.style.display = 'none';
+            document.getElementById('form-success').style.display = 'block';
+            trackClick('inquiry-form-submitted');
+          } else {
+            alert('Oops! Something went wrong. Please try again or reach out directly on Airbnb.');
+          }
+        } catch {
+          alert('Oops! Something went wrong. Please try again.');
+        }
+      });
+    }
+
+    /* ── Sticky header shrink ── */
+    window.addEventListener('scroll', () => {
+      document.querySelector('header').style.padding =
+        window.scrollY > 60 ? '0.75rem 3rem' : '1.25rem 3rem';
+    });
+  </script>
+
+</body>
+</html>
